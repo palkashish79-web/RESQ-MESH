@@ -1,14 +1,15 @@
 import React from 'react';
 import { useDisaster } from '../context/DisasterContext';
-import { AlertTriangleIcon, ActivityIcon, GaugeIcon, MapPinIcon, UsersIcon } from './Icons';
+import { AlertTriangleIcon, ActivityIcon, GaugeIcon, MapPinIcon, UsersIcon, ShieldIcon } from './Icons';
+import { SemiCircularGauge } from './Gauges';
 
 export const DisasterRiskCard = () => {
   const { scenario } = useDisaster();
 
   const getScoreColor = (score) => {
-    if (score >= 85) return 'var(--danger)';
-    if (score >= 70) return 'var(--warning)';
-    return 'var(--success)';
+    if (score >= 85) return '#ef4444';
+    if (score >= 70) return '#f59e0b';
+    return '#10b981';
   };
 
   return (
@@ -26,19 +27,17 @@ export const DisasterRiskCard = () => {
       </div>
 
       <div className="card-body">
-        {/* Main Threat Overview Banner */}
+        {/* Main Threat Overview Banner with SemiCircular Speedometer Gauge */}
         <div className="threat-hero">
-          <div className="threat-score-box">
-            <div className="gauge-circle" style={{ borderColor: getScoreColor(scenario.riskScore) }}>
-              <span className="score-number">{scenario.riskScore}</span>
-              <span className="score-max">/100</span>
-            </div>
-            <div className="threat-score-meta">
-              <span className="threat-label">RISK INDEX</span>
-              <span className="threat-grade" style={{ color: getScoreColor(scenario.riskScore) }}>
-                {scenario.threatLevel}
-              </span>
-            </div>
+          <div className="threat-gauge-wrapper">
+            <SemiCircularGauge
+              value={scenario.riskScore}
+              max={100}
+              severity={scenario.threatLevel}
+              width={140}
+              height={76}
+              color={getScoreColor(scenario.riskScore)}
+            />
           </div>
 
           <div className="threat-meta-list">
@@ -61,7 +60,7 @@ export const DisasterRiskCard = () => {
           </div>
         </div>
 
-        {/* Urgency Alert Bar */}
+        {/* Urgency Alert Bar with scanning icon */}
         <div className="urgency-banner">
           <div className="urgency-icon">⚠️</div>
           <div className="urgency-content">
@@ -73,7 +72,10 @@ export const DisasterRiskCard = () => {
         {/* Threat Breakdown Progress Bars */}
         <div className="threat-breakdown">
           <div className="breakdown-header">
-            <span>KEY HAZARD VECTORS</span>
+            <div className="breakdown-header-title">
+              <ActivityIcon className="w-3.5 h-3.5 text-danger" />
+              <span>KEY HAZARD VECTORS</span>
+            </div>
             <span>SEVERITY</span>
           </div>
 
@@ -89,7 +91,11 @@ export const DisasterRiskCard = () => {
                 <div className="progress-track">
                   <div
                     className="progress-bar"
-                    style={{ width: `${item.score}%`, backgroundColor: item.color }}
+                    style={{
+                      width: `${item.score}%`,
+                      backgroundColor: item.color,
+                      boxShadow: `0 0 8px ${item.color}60`
+                    }}
                   />
                 </div>
                 <span className="breakdown-desc">{item.desc}</span>
@@ -110,97 +116,51 @@ export const DisasterRiskCard = () => {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: #090f1d;
+          background: #080d19;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-md);
-          padding: 0.85rem 1rem;
+          padding: 0.95rem 1.15rem;
           margin-bottom: 0.85rem;
-          gap: 0.85rem;
+          gap: 1.15rem;
           flex-wrap: wrap;
         }
 
-        .threat-score-box {
+        .threat-gauge-wrapper {
           display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          flex-shrink: 0;
-        }
-
-        .gauge-circle {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          border: 3px solid var(--danger);
-          display: flex;
-          flex-direction: column;
           align-items: center;
           justify-content: center;
-          background: rgba(239, 68, 68, 0.08);
-          box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+          padding: 0.2rem 0.5rem;
           flex-shrink: 0;
-        }
-
-        .score-number {
-          font-size: 1.25rem;
-          font-weight: 800;
-          font-family: var(--font-mono);
-          line-height: 1;
-          color: #ffffff;
-        }
-
-        .score-max {
-          font-size: 0.55rem;
-          color: var(--text-muted);
-          font-family: var(--font-mono);
-        }
-
-        .threat-score-meta {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .threat-label {
-          font-size: 0.62rem;
-          font-weight: 800;
-          letter-spacing: 0.06em;
-          color: var(--text-muted);
-        }
-
-        .threat-grade {
-          font-size: 0.92rem;
-          font-weight: 800;
-          letter-spacing: -0.01em;
-          white-space: nowrap;
         }
 
         .threat-meta-list {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-          gap: 0.55rem 1rem;
+          gap: 0.65rem 1rem;
           flex: 1;
           min-width: 220px;
           border-left: 1px solid var(--border-subtle);
-          padding-left: 1rem;
+          padding-left: 1.15rem;
         }
 
         .meta-item {
           display: flex;
           flex-direction: column;
-          gap: 0.1rem;
+          gap: 0.12rem;
           min-width: 0;
         }
 
         .meta-key {
           font-size: 0.62rem;
-          color: var(--text-muted);
+          color: #64748b;
           text-transform: uppercase;
-          letter-spacing: 0.04em;
-          font-weight: 600;
+          letter-spacing: 0.05em;
+          font-weight: 700;
           white-space: nowrap;
         }
 
         .meta-val {
-          font-size: 0.78rem;
+          font-size: 0.82rem;
           font-weight: 700;
           color: var(--text-primary);
           overflow-wrap: break-word;
@@ -217,17 +177,17 @@ export const DisasterRiskCard = () => {
         .urgency-banner {
           display: flex;
           align-items: flex-start;
-          gap: 0.65rem;
+          gap: 0.75rem;
           background: rgba(239, 68, 68, 0.08);
           border: 1px solid rgba(239, 68, 68, 0.3);
           border-radius: var(--radius-md);
-          padding: 0.65rem 0.85rem;
+          padding: 0.75rem 0.95rem;
           margin-bottom: 0.85rem;
           min-width: 0;
         }
 
         .urgency-icon {
-          font-size: 1.05rem;
+          font-size: 1.1rem;
           flex-shrink: 0;
         }
 
@@ -237,17 +197,17 @@ export const DisasterRiskCard = () => {
         }
 
         .urgency-title {
-          font-size: 0.78rem;
+          font-size: 0.8rem;
           font-weight: 800;
           color: #fca5a5;
           letter-spacing: 0.02em;
-          margin-bottom: 0.15rem;
+          margin-bottom: 0.2rem;
         }
 
         .urgency-desc {
-          font-size: 0.72rem;
+          font-size: 0.73rem;
           color: #cbd5e1;
-          line-height: 1.35;
+          line-height: 1.4;
         }
 
         .threat-breakdown {
@@ -260,6 +220,7 @@ export const DisasterRiskCard = () => {
         .breakdown-header {
           display: flex;
           justify-content: space-between;
+          align-items: center;
           font-size: 0.65rem;
           font-weight: 800;
           letter-spacing: 0.06em;
@@ -268,10 +229,17 @@ export const DisasterRiskCard = () => {
           padding-bottom: 0.35rem;
         }
 
+        .breakdown-header-title {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          color: #f87171;
+        }
+
         .breakdown-list {
           display: flex;
           flex-direction: column;
-          gap: 0.55rem;
+          gap: 0.6rem;
           min-width: 0;
         }
 
@@ -296,21 +264,23 @@ export const DisasterRiskCard = () => {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          color: #e2e8f0;
         }
 
         .breakdown-score {
           font-family: var(--font-mono);
-          font-weight: 700;
+          font-weight: 800;
           flex-shrink: 0;
-          font-size: 0.74rem;
+          font-size: 0.75rem;
         }
 
         .progress-track {
           width: 100%;
-          height: 5px;
-          background: #090e1a;
+          height: 6px;
+          background: #050812;
           border-radius: 9999px;
           overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .progress-bar {
@@ -335,7 +305,7 @@ export const DisasterRiskCard = () => {
             border-left: none;
             padding-left: 0;
             border-top: 1px solid var(--border-subtle);
-            padding-top: 0.65rem;
+            padding-top: 0.75rem;
             width: 100%;
           }
         }
@@ -349,3 +319,4 @@ export const DisasterRiskCard = () => {
     </div>
   );
 };
+export default DisasterRiskCard;

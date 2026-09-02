@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDisaster } from '../context/DisasterContext';
 import { SheltersSection } from '../components/SheltersSection';
 import { ShelterIcon, SearchIcon, NavigationIcon, PhoneCallIcon, MapPinIcon, CheckIcon } from '../components/Icons';
+import { CircularGauge } from '../components/Gauges';
 
 export const SheltersPage = () => {
   const { shelters, setActiveTab } = useDisaster();
@@ -98,7 +99,9 @@ export const SheltersPage = () => {
               </div>
 
               <div className="shelter-loc-row">
-                <MapPinIcon className="w-4 h-4 text-slate-400" />
+                <div className="loc-badge-icon" title="Verified Shelter Location">
+                  <MapPinIcon className="w-3.5 h-3.5 text-cyan" />
+                </div>
                 <span>{shelter.address} • <strong>{shelter.distance}</strong></span>
               </div>
 
@@ -109,21 +112,30 @@ export const SheltersPage = () => {
                 {shelter.doctorOnSite && <span className="info-chip text-emerald">🩺 Medical Doctor On Site</span>}
               </div>
 
-              {/* Capacity Meter */}
+              {/* Capacity Meter with CircularGauge */}
               {!isClosed ? (
-                <div className="cap-box">
-                  <div className="cap-labels">
-                    <span>CAPACITY OCCUPIED: <strong>{occupancyPct}%</strong> ({shelter.capacityOccupied}/{shelter.capacityTotal})</span>
-                    <span className="beds-open"><strong>{shelter.bedsAvailable}</strong> BEDS OPEN</span>
-                  </div>
-                  <div className="cap-track">
-                    <div
-                      className="cap-fill"
-                      style={{
-                        width: `${occupancyPct}%`,
-                        backgroundColor: occupancyPct > 85 ? 'var(--warning)' : 'var(--success)'
-                      }}
-                    />
+                <div className="cap-box-wrap">
+                  <CircularGauge
+                    value={occupancyPct}
+                    size={46}
+                    strokeWidth={4.5}
+                    color={occupancyPct > 85 ? 'var(--warning)' : '#10b981'}
+                    label={`${occupancyPct}%`}
+                  />
+                  <div className="cap-info-text">
+                    <div className="cap-labels">
+                      <span className="cap-status-title">OCCUPANCY: <strong>{occupancyPct}%</strong> ({shelter.capacityOccupied}/{shelter.capacityTotal})</span>
+                      <span className="beds-open"><strong>{shelter.bedsAvailable}</strong> BEDS OPEN</span>
+                    </div>
+                    <div className="cap-track">
+                      <div
+                        className="cap-fill"
+                        style={{
+                          width: `${occupancyPct}%`,
+                          backgroundColor: occupancyPct > 85 ? 'var(--warning)' : 'var(--success)'
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -298,9 +310,21 @@ export const SheltersPage = () => {
         .shelter-loc-row {
           display: flex;
           align-items: center;
-          gap: 0.35rem;
+          gap: 0.5rem;
           font-size: 0.74rem;
           color: var(--text-secondary);
+        }
+
+        .loc-badge-icon {
+          width: 24px;
+          height: 24px;
+          border-radius: 6px;
+          background: rgba(6, 182, 212, 0.12);
+          border: 1px solid rgba(6, 182, 212, 0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
         }
 
         .shelter-loc-row strong {
@@ -328,14 +352,26 @@ export const SheltersPage = () => {
           border-color: rgba(16, 185, 129, 0.3);
         }
 
-        .cap-box {
+        .cap-box-wrap {
           background: #070c17;
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-sm);
-          padding: 0.75rem 1rem;
+          padding: 0.65rem 0.85rem;
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+        }
+
+        .cap-info-text {
+          flex: 1;
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
+          gap: 0.35rem;
+          min-width: 0;
+        }
+
+        .cap-status-title {
+          font-size: 0.72rem;
         }
 
         .cap-labels {

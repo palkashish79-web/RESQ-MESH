@@ -112,15 +112,28 @@ export const AiAssistantSection = () => {
         <div className="quick-prompts-carousel">
           <span className="prompts-label">QUICK ASSISTANCE:</span>
           <div className="prompts-scroll">
-            {DEFAULT_AI_PROMPTS.map((prompt, idx) => (
-              <button
-                key={idx}
-                className="prompt-pill"
-                onClick={() => handlePromptClick(prompt)}
-              >
-                {prompt}
-              </button>
-            ))}
+            {DEFAULT_AI_PROMPTS.map((prompt, idx) => {
+              const shortLabels = {
+                'Where is the safest shelter near me?': 'Nearest Shelter?',
+                'What is the safest evacuation route right now?': 'Safest Route Now?',
+                'Emergency checklist: What should I pack in my Go-Bag?': 'Go-Bag Checklist',
+                'What should I do if water is entering my ground floor?': 'Ground Floor Flooding',
+                'How do I treat hypothermia or severe bleeding in a flood?': 'First-Aid & Triage',
+                'Is tap water safe to drink in coastal sector 4?': 'Water Safety Check'
+              };
+              const displayLabel = shortLabels[prompt] || prompt;
+              return (
+                <button
+                  key={idx}
+                  className="prompt-pill"
+                  onClick={() => handlePromptClick(prompt)}
+                  title={prompt}
+                  aria-label={prompt}
+                >
+                  {displayLabel}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -326,20 +339,28 @@ export const AiAssistantSection = () => {
         }
 
         .prompt-pill {
-          background: rgba(255, 255, 255, 0.04);
+          background: rgba(255, 255, 255, 0.05);
           border: 1px solid var(--border-subtle);
-          color: #94a3b8;
+          color: #cbd5e1;
           font-family: var(--font-main);
           font-size: 0.65rem;
-          padding: 0.15rem 0.45rem;
+          font-weight: 600;
+          padding: 0.2rem 0.55rem;
           border-radius: 4px;
           cursor: pointer;
           transition: all 0.2s ease;
           flex-shrink: 0;
+          max-width: 175px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          display: inline-block;
+          vertical-align: middle;
         }
 
         .prompt-pill:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(139, 92, 246, 0.15);
+          border-color: rgba(139, 92, 246, 0.4);
           color: #ffffff;
         }
 
