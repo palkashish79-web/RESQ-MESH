@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { DISASTER_SCENARIOS, EMERGENCY_ALERTS, SHELTERS, SAFE_ROUTES, AI_KNOWLEDGE_BASE } from '../data/mockData';
 
 const DisasterContext = createContext();
 
 export const DisasterProvider = ({ children }) => {
   const [scenarioKey, setScenarioKey] = useState('cyclone-surge');
-  const [activeTab, setActiveTab] = useState('map');
+  const [activeTab, setActiveTab] = useState('map'); // Removed duplicate activeTab declaration
   const [sosModalOpen, setSosModalOpen] = useState(false);
   const [sosActive, setSosActive] = useState(false);
   const [sosPayload, setSosPayload] = useState(null);
@@ -31,7 +31,6 @@ export const DisasterProvider = ({ children }) => {
 
   const scenario = DISASTER_SCENARIOS[scenarioKey] || DISASTER_SCENARIOS['cyclone-surge'];
 
-  // Filter alerts by current scenario or general critical alerts
   const currentAlerts = EMERGENCY_ALERTS.filter(
     (a) => a.scenarioId === scenarioKey || a.scenarioId === 'cyclone-surge'
   );
@@ -63,7 +62,6 @@ export const DisasterProvider = ({ children }) => {
   const switchScenario = (key) => {
     if (DISASTER_SCENARIOS[key]) {
       setScenarioKey(key);
-      // Add a system notification in AI chat
       setAiMessages((prev) => [
         ...prev,
         {
@@ -89,7 +87,6 @@ export const DisasterProvider = ({ children }) => {
     setAiMessages((prev) => [...prev, userMsg]);
     setIsAiTyping(true);
 
-    // Realistic intelligent response matching
     setTimeout(() => {
       const lower = userPrompt.toLowerCase();
       let reply = '';
